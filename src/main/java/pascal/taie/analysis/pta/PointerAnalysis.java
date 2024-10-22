@@ -130,7 +130,8 @@ public class PointerAnalysis extends ProgramAnalysis<PointerAnalysisResult> {
                 new ClassInitializer(),
                 new ThreadHandler(),
                 new NativeModeller(),
-                new ExceptionAnalysis()
+                new ExceptionAnalysis(),
+                new UnserializeEntryPointHandler()
         );
         int javaVersion = World.get().getOptions().getJavaVersion();
         if (javaVersion < 9) {
