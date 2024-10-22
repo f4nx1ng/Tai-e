@@ -1,0 +1,22 @@
+optionsFile: null
+printHelp: false
+classPath: null
+appClassPath: java-benchmarks/urldns
+mainClass: URLDNS
+inputClasses: []
+javaVersion: 8
+prependJVM: false
+allowPhantom: true
+worldBuilderClass: pascal.taie.frontend.soot.SootWorldBuilder
+outputDir: output
+preBuildIR: false
+worldCacheMode: false
+scope: ALL
+nativeModel: true
+planFile: null
+analyses:
+  #  ir-dumper: ;
+  pta: cs:ci;implicit-entries:false;distinguish-string-constants:null;reflection-inference:solar;merge-string-objects:false;merge-string-builders:false;merge-exception-objects:false;taint-config:config/unserialize/taint-config.yml;
+onlyGenPlan: false
+keepResult:
+  - $KEEP-ALL

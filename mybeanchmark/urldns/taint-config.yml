@@ -1,0 +1,15 @@
+sources:
+#  - { kind: call, method: "<URLDNS: byte[] getpayload()>", index: result }
+  - { kind: param, method: "<java.util.HashMap: void readObject(java.io.ObjectInputStream)>", index: 0 }
+#  - { kind: call, method: "<java.net.URLStreamHandler: int hashCode(java.net.URL)>", index: 0}
+sinks:
+  - { method: "<java.net.InetAddress: java.net.InetAddress getByName(java.lang.String)>", index: 0 }
+#  - { method: "<java.net.URL: int hashCode()>", index: base}
+  - { method: "<java.net.URLStreamHandler: int hashCode(java.net.URL)>", index: base}
+
+transfers:
+  - { method: "<java.io.ByteArrayInputStream: void <init>(byte[])>", from: 0, to: base }
+  - { method: "<java.io.ObjectInputStream: void <init>(java.io.InputStream)>", from: 0, to: base }
+  - { method: "<java.io.ObjectInputStream: java.lang.Object readObject()>", from: base, to: result }
+#  - { method: "<java.net.URLStreamHandler: int hashCode(java.net.URL)>", from: 0, to: base}
+
