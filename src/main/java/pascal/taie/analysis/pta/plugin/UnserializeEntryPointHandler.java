@@ -1,8 +1,13 @@
 package pascal.taie.analysis.pta.plugin;
 
+import pascal.taie.World;
+import pascal.taie.analysis.pta.core.cs.context.Context;
 import pascal.taie.analysis.pta.core.solver.DeclaredParamProvider;
 import pascal.taie.analysis.pta.core.solver.EntryPoint;
 import pascal.taie.analysis.pta.core.solver.Solver;
+import pascal.taie.ir.exp.InvokeInstanceExp;
+import pascal.taie.ir.exp.Var;
+import pascal.taie.ir.stmt.Invoke;
 import pascal.taie.language.classes.JClass;
 import pascal.taie.language.classes.JMethod;
 import pascal.taie.language.classes.Subsignature;
@@ -11,6 +16,7 @@ import pascal.taie.language.type.NullType;
 import pascal.taie.language.type.Type;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class UnserializeEntryPointHandler implements Plugin {
@@ -39,5 +45,33 @@ public class UnserializeEntryPointHandler implements Plugin {
                 }
             }
         }
+    }
+
+    @Override
+    public void onPhaseFinish() {
+        solver.getCallGraph().reachableMethods().forEach(csMethod -> {
+            if (csMethod.getMethod().getDeclaringClass().getName().equals("java.net.URL")){
+                csMethod.getMethod().getIR().getStmts().forEach(stmt1 -> {
+                    if(stmt1 instanceof Invoke invoke && (invoke.isVirtual() || invoke.isInterface()) && invoke.getRValue() instanceof InvokeInstanceExp invokeInstanceExp){
+                        Var var = invokeInstanceExp.getBase();
+                        Context context = csMethod.getContext();
+                        if (solver.getCSManager().getCSVar(context, var).getPointsToSet() == null || solver.getCSManager().getCSVar(context, var).getPointsToSet().isEmpty()){
+                            JClass jclass = World.get().getClassHierarchy().getClass(var.getType().getName());
+                            Collection<JClass> implementors = new ArrayList<>();
+                            if(invoke.isInterface()){
+                                implementors.addAll(World.get().getClassHierarchy().getDirectImplementorsOf(jclass));
+                            }else {
+                                implementors.add(jclass);
+                                implementors.addAll(World.get().getClassHierarchy().getDirectSubclassesOf(jclass));
+                            }
+                            System.out.printf("%s %s %s %s\n", csMethod.getMethod().getName(), var, jclass, implementors);
+                            implementors.forEach(implementor ->{
+                                solver.addPointsTo(solver.getCSManager().getCSVar(csMethod.getContext(), var), csMethod.getContext(), solver.getHeapModel().getMockObj(()->"Unserialzie", implementor.getName(), implementor.getType()));
+                            });
+                        }
+                    }
+                });
+            }
+        });
     }
 }
