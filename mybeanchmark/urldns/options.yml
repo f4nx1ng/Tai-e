@@ -16,7 +16,7 @@ nativeModel: true
 planFile: null
 analyses:
   #  ir-dumper: ;
-  pta: cs:ci;implicit-entries:false;distinguish-string-constants:null;reflection-inference:solar;merge-string-objects:false;merge-string-builders:false;merge-exception-objects:false;taint-config:config/unserialize/taint-config.yml;
+  pta: cs:ci;implicit-entries:false;distinguish-string-constants:null;reflection-inference:solar;merge-string-objects:false;merge-string-builders:false;merge-exception-objects:false;taint-config:mybeanchmark/urldns/taint-config.yml;
 onlyGenPlan: false
 keepResult:
   - $KEEP-ALL
